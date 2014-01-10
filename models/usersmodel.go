@@ -23,7 +23,9 @@ func (*Users) Construct(args ...interface{}) *Users {
 		switch t := value.(type) {
 		case *utils.Credentials:
 			if value.(*utils.Credentials).Got() {
-				this.Object = this.Find(this.authQuery(value.(*utils.Credentials))).One().(*UserScheme)
+				if result, ok := this.Find(this.authQuery(value.(*utils.Credentials))).One().(*UserScheme); ok {
+					this.Object = result
+				}
 			}
 			break
 
@@ -59,6 +61,6 @@ func (this *Users) CustomMethod() {
 func (this *Users) authQuery(credentials *utils.Credentials) interface{} {
 	return map[string]interface{}{
 		"login":    credentials.User(),
-		"password": HashOf(credentials.Password()),
+		"password": utils.HashOf(credentials.Password()),
 	}
 }

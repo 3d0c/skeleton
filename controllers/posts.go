@@ -5,7 +5,6 @@ import (
 	"github.com/3d0c/skeleton/models"
 	"github.com/codegangsta/martini"
 	"labix.org/v2/mgo/bson"
-	"log"
 	"net/http"
 )
 
@@ -21,41 +20,55 @@ func PostsCreate(u models.Users, post models.Posts, params models.PostScheme, en
 	return http.StatusOK, encoder.Must(enc.Encode(result))
 }
 
-func PostsFindId(posts models.Posts, enc encoder.Encoder, params martini.Params, req *http.Request) (int, []byte) {
+func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params, req *http.Request) (int, []byte) {
 	var result interface{}
 
-	if !bson.IsObjectIdHex(params["id"]) {
+	if id, ok := urlParams["id"]; ok && bson.IsObjectIdHex(id) {
+		result = posts.Find(id).One()
+	} else {
+		result = posts.Find().All()
+	}
+
+	if result == nil {
+		return http.StatusNotFound, []byte{}
+	}
+
+	return http.StatusOK, encoder.Must(enc.Encode(result))
+}
+
+func PostsUpdate(u models.Users, posts models.Posts, enc encoder.Encoder, params models.PostScheme, urlParams martini.Params, req *http.Request) (int, []byte) {
+	var result interface{}
+	selector := map[string]interface{}{}
+
+	if id, ok := urlParams["id"]; ok && bson.IsObjectIdHex(id) {
+		selector["_id"] = bson.ObjectIdHex(id)
+	} else {
 		return http.StatusBadRequest, []byte{}
 	}
 
-	if result = posts.Find(bson.ObjectIdHex(params["id"])).One(); result == nil {
-		return http.StatusNotFound, []byte{}
+	selector["uid"] = u.Object.Id
+
+	if result, _ = posts.Update(selector, params); result == nil {
+		return http.StatusInternalServerError, []byte{}
 	}
 
 	return http.StatusOK, encoder.Must(enc.Encode(result))
 }
 
-func PostsFindAll(posts models.Posts, enc encoder.Encoder, urlParams martini.Params, req *http.Request) (int, []byte) {
-	var result interface{}
+func PostsDelete(u models.Users, posts models.Posts, urlParams martini.Params) (int, []byte) {
+	selector := map[string]interface{}{}
 
-	if result = posts.Find().All(); result == nil {
-		return http.StatusNotFound, []byte{}
+	if id, ok := urlParams["id"]; ok && bson.IsObjectIdHex(id) {
+		selector["_id"] = bson.ObjectIdHex(id)
+	} else {
+		return http.StatusBadRequest, []byte{}
 	}
 
-	log.Println(result)
+	selector["uid"] = u.Object.Id
 
-	return http.StatusOK, encoder.Must(enc.Encode(result))
-}
+	if !posts.Delete(selector) {
+		return http.StatusBadRequest, []byte{}
+	}
 
-func PostsFind(u models.Users, p models.Posts, enc encoder.Encoder, urlParams martini.Params, req *http.Request) (int, []byte) {
-	log.Println(urlParams)
-	log.Println(req.URL.Query().Get("limit"))
-
-	result := p.Find()
-
-	log.Println(result)
-
-	return http.StatusOK, encoder.Must(enc.Encode(result))
-
-	// return http.StatusOK, []byte{}
+	return http.StatusOK, []byte{}
 }

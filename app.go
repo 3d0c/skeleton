@@ -24,7 +24,7 @@ func init() {
 // POST   /users       some data, e.g.: '{"login": "xxx", "password": "ccc"}'
 // PUT    /user        some data, e.g.: '{"profile":{"first_name" : "xxx"}}'
 //
-// GET    /posts       array of posts, avail opts: &limit= &offset= &uid= &expand[]=uid
+// GET    /posts       array of posts, avail opts: &limit= &offset= &uid=
 // GET    /posts/:id   get specific post
 // POST   /posts       some data, e.g.: '{"title": "awesome", "body": "here am i"}'
 // PUT    /posts/:id   some data, e.g.: '{"title": "True title."}'
@@ -87,14 +87,16 @@ func main() {
 		controllers.UsersCreate,           // func(u models.Users, params models.UserScheme, enc encoder.Encoder)
 	)
 
+	// Find specific
 	route.Get("/posts/:id",
 		models.Construct(models.Posts{}), // Public method, do not need authorization, init only Posts model
-		controllers.PostsFindId,
+		controllers.PostsFind,
 	)
 
+	// Find all
 	route.Get("/posts",
 		models.Construct(models.Posts{}), // Public method, do not need authorization, init only Posts model
-		controllers.PostsFindAll,
+		controllers.PostsFind,
 	)
 
 	route.Post("/posts",
@@ -107,10 +109,23 @@ func main() {
 		controllers.PostsCreate,
 	)
 
-	// route.Get("/posts/**",
-	// 	models.Construct(models.Users{}, credentials),
-	// 	controllers.PostsFind,
-	// )
+	route.Put("/posts/:id",
+		models.Construct(models.Users{}, credentials), // Init Users model, because
+		models.Construct(models.Posts{}),              // each Post should containt user id.
+
+		binding.Bind(models.PostScheme{}),
+
+		controllers.CheckAuth,
+		controllers.PostsUpdate,
+	)
+
+	route.Delete("/posts/:id",
+		models.Construct(models.Users{}, credentials),
+		models.Construct(models.Posts{}),
+
+		controllers.CheckAuth,
+		controllers.PostsDelete,
+	)
 
 	m.Action(route.Handle)
 

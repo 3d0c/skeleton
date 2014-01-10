@@ -1,11 +1,7 @@
 package models
 
 import (
-	"crypto/hmac"
-	"crypto/sha1"
-	"encoding/hex"
 	"github.com/codegangsta/martini"
-	"io"
 	"log"
 	"net/http"
 	"reflect"
@@ -27,14 +23,4 @@ func Construct(obj interface{}, args ...interface{}) martini.Handler {
 			log.Println("Construct method not found or invalid")
 		}
 	}
-}
-
-func HashOf(in string) string {
-	secretKey := []byte("CHANGE_ME!")
-
-	mac := hmac.New(sha1.New, secretKey)
-
-	io.WriteString(mac, in)
-
-	return hex.EncodeToString(mac.Sum(nil))
 }
