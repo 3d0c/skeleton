@@ -64,7 +64,7 @@ func main() {
 	// Find Id
 	route.Get("/posts/:id",
 		models.Construct(models.Posts{}),     // Public method. It dosn't need authorization. Init only Posts model.
-		binding.BindUrl(models.UrlOptions{}), //
+		binding.BindUrl(models.UrlOptions{}), // For further purposes (expand, etc...)
 		controllers.PostsFind,                //
 	)
 
@@ -94,9 +94,17 @@ func main() {
 	route.Delete("/posts/:id",
 		models.Construct(models.Users{}, credentials),
 		models.Construct(models.Posts{}),
-
 		controllers.CheckAuth,
 		controllers.PostsDelete,
+	)
+
+	route.Post("/comments",
+		models.Construct(models.Users{}, credentials),
+		models.Construct(models.Posts{}),
+		models.Construct(models.Comments{}),
+		binding.Bind(models.CommentScheme{}),
+		controllers.CheckAuth,
+		controllers.CommentsCreate,
 	)
 
 	m.Action(route.Handle)

@@ -48,3 +48,16 @@ type UrlOptions struct {
 	Limit  int `url:"limit"`
 	Offset int `url:"offset"`
 }
+
+type CommentScheme struct {
+	Id     bson.ObjectId `bson:"_id,omitempty" json:"id" binding:"-"`
+	Uid    bson.ObjectId `bson:"uid,omitempty" json:"uid" binding:"-"`
+	PostId bson.ObjectId `bson:"pid,omitempty" json:"post_id" binding:"require"`
+	Body   string        `bson:",omitempty" json:"body"`
+}
+
+func (this CommentScheme) Validate(errors *binding.Errors, req *http.Request) {
+	if len(this.Body) == 0 {
+		errors.Fields["body"] = "Body can't be empty."
+	}
+}
