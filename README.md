@@ -1,5 +1,5 @@
 ### Restful API application example in Go, based on Martini framework.
-Some features from the box:
+Some features out of the box:
 
 - DRY Models (right now, only MongoDB supported)
 - Controllers
