@@ -90,7 +90,7 @@ Expected response: ```200 OK``` and
 
 **All other**:
 
-Here is one sample object "Posts", wich implements common REST behaviour:
+Here is one sample object "Posts", which implements common REST behaviour:
 
 ```
 GET		/posts		avail url opts: &offset=(int), &limit=(int)
@@ -118,7 +118,7 @@ type CommentScheme struct {
 
 ```
 
-Right here we could add Validation method, e.g.:
+We could add Validation method right here, e.g.:
 
 ```go
 func (this CommentScheme) Validate(errors *binding.Errors, req *http.Request) {
@@ -190,7 +190,7 @@ import (
 func CommentsCreate(u models.Users, post models.Posts, comment models.Comments, params models.CommentScheme, enc encoder.Encoder) (int, []byte) {
 	var result interface{}
 
-	// we've got here a post model, so we can check
+	// we've got here a post model, so we could check
 	// is there a post with 'id', given by user.
 
 	params.Uid = u.Object.Id
@@ -225,6 +225,7 @@ Expected response:
 	"body"    : "Clever comment"
 }
 ```
+
 
 #### Models relations.
 Coming soon…
