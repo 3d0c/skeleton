@@ -42,3 +42,9 @@ func (this PostScheme) Validate(errors *binding.Errors, req *http.Request) {
 		errors.Fields["title"] = "Title can't be empty."
 	}
 }
+
+// This isn't a real model scheme, but there is a good place to store it all together
+type UrlOptions struct {
+	Limit  int `url:"limit"`
+	Offset int `url:"offset"`
+}

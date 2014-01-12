@@ -20,13 +20,13 @@ func PostsCreate(u models.Users, post models.Posts, params models.PostScheme, en
 	return http.StatusOK, encoder.Must(enc.Encode(result))
 }
 
-func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params, req *http.Request) (int, []byte) {
+func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params, opt models.UrlOptions) (int, []byte) {
 	var result interface{}
 
 	if id, ok := urlParams["id"]; ok && bson.IsObjectIdHex(id) {
 		result = posts.Find(id).One()
 	} else {
-		result = posts.Find().All()
+		result = posts.Find().Skip(opt.Offset).Limit(opt.Limit).All()
 	}
 
 	if result == nil {
@@ -36,7 +36,7 @@ func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params
 	return http.StatusOK, encoder.Must(enc.Encode(result))
 }
 
-func PostsUpdate(u models.Users, posts models.Posts, enc encoder.Encoder, params models.PostScheme, urlParams martini.Params, req *http.Request) (int, []byte) {
+func PostsUpdate(u models.Users, posts models.Posts, enc encoder.Encoder, params models.PostScheme, urlParams martini.Params) (int, []byte) {
 	var result interface{}
 	selector := map[string]interface{}{}
 

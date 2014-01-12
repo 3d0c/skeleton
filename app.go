@@ -16,32 +16,6 @@ func init() {
 	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 }
 
-// Restful API application skeleton, based on Martini framework.
-// Models, Controllers, Auth (user-model), MongoDB, Schemes, Config, etc...
-// Hope it is useful.
-//
-// GET    /user
-// POST   /users       some data, e.g.: '{"login": "xxx", "password": "ccc"}'
-// PUT    /user        some data, e.g.: '{"profile":{"first_name" : "xxx"}}'
-//
-// GET    /posts       array of posts, avail opts: &limit= &offset= &uid=
-// GET    /posts/:id   get specific post
-// POST   /posts       some data, e.g.: '{"title": "awesome", "body": "here am i"}'
-// PUT    /posts/:id   some data, e.g.: '{"title": "True title."}'
-// DELETE /posts/:id   delete id
-
-// Common behaviour:
-// 		GET   /objects     - find all
-// 		GET   /objects/id  - find specific
-// 		POST  /objects     - new entity
-// 		PUT   /objects/id  - update specific
-
-// User model is a bit different.
-//     	GET   /user   (not /users and not /users/id) because user dosn't know its id
-//     	PUT   /user   (same rule)
-//     	but:
-//     	POST  /users
-
 func main() {
 	config.Init("./app.json")
 
@@ -87,24 +61,24 @@ func main() {
 		controllers.UsersCreate,           // func(u models.Users, params models.UserScheme, enc encoder.Encoder)
 	)
 
-	// Find specific
+	// Find Id
 	route.Get("/posts/:id",
-		models.Construct(models.Posts{}), // Public method, do not need authorization, init only Posts model
-		controllers.PostsFind,
+		models.Construct(models.Posts{}),     // Public method. It dosn't need authorization. Init only Posts model.
+		binding.BindUrl(models.UrlOptions{}), //
+		controllers.PostsFind,                //
 	)
 
 	// Find all
 	route.Get("/posts",
-		models.Construct(models.Posts{}), // Public method, do not need authorization, init only Posts model
-		controllers.PostsFind,
+		models.Construct(models.Posts{}),     // Public method. It dosn't need authorization. Init only Posts model.
+		binding.BindUrl(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc... Just a hack,
+		controllers.PostsFind,                // actually it invokes patched Form midleware directly (without content-type checking).
 	)
 
 	route.Post("/posts",
 		models.Construct(models.Users{}, credentials), // Init Users model, because
 		models.Construct(models.Posts{}),              // each Post should containt user id.
-
 		binding.Bind(models.PostScheme{}),
-
 		controllers.CheckAuth,
 		controllers.PostsCreate,
 	)
@@ -112,9 +86,7 @@ func main() {
 	route.Put("/posts/:id",
 		models.Construct(models.Users{}, credentials), // Init Users model, because
 		models.Construct(models.Posts{}),              // each Post should containt user id.
-
 		binding.Bind(models.PostScheme{}),
-
 		controllers.CheckAuth,
 		controllers.PostsUpdate,
 	)
