@@ -18,7 +18,8 @@ This application uses MongoDB, so if you don't already have it, install it.
 Now it's ready to use. Default configuration supposes that MongoDB listen at least on localhost:27017 and dosn't require auth.
 
 ```
-~ go run $GOPATH/src/github.com/3d0c/skeleton/app.go                                      
+~ cd $GOPATH/src/github.com/3d0c/skeleton
+~ go run app.go
 2014/01/12 15:03:38 app.go:104: Waiting for connections...
 ```
 
