@@ -8,7 +8,7 @@ import (
 )
 
 func HashOf(in string) string {
-	secretKey := []byte("CHANGE_ME!")
+	secretKey := []byte(AppCfg.SecretKey())
 
 	mac := hmac.New(sha1.New, secretKey)
 

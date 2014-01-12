@@ -14,11 +14,12 @@ import (
 
 func init() {
 	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
+
+	config.Init("./app.json")
+	config.LoadInto(utils.AppCfg)
 }
 
 func main() {
-	config.Init("./app.json")
-
 	m := martini.New()
 	route := martini.NewRouter()
 
@@ -77,15 +78,15 @@ func main() {
 
 	route.Post("/posts",
 		models.Construct(models.Users{}, credentials), // Init Users model, because
-		models.Construct(models.Posts{}),              // each Post should containt user id.
+		models.Construct(models.Posts{}),              // each Post should contain user id.
 		binding.Bind(models.PostScheme{}),
 		controllers.CheckAuth,
 		controllers.PostsCreate,
 	)
 
 	route.Put("/posts/:id",
-		models.Construct(models.Users{}, credentials), // Init Users model, because
-		models.Construct(models.Posts{}),              // each Post should containt user id.
+		models.Construct(models.Users{}, credentials),
+		models.Construct(models.Posts{}),
 		binding.Bind(models.PostScheme{}),
 		controllers.CheckAuth,
 		controllers.PostsUpdate,
@@ -111,7 +112,7 @@ func main() {
 
 	log.Println("Waiting for connections...")
 
-	if err := http.ListenAndServe(":8000", m); err != nil {
+	if err := http.ListenAndServe(utils.AppCfg.ListenOn(), m); err != nil {
 		log.Fatal(err)
 	}
 }

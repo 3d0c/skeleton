@@ -1,8 +1,7 @@
 {
     "application" : {
         "secretkey" : "CHANGE_ME!",
-        "port_http" : 8000,
-        "port_https": 8001
+        "listen_on" : ":8000"
     },
 
     "connections" : {
