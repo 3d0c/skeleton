@@ -64,16 +64,16 @@ func main() {
 
 	// Find Id
 	route.Get("/posts/:id",
-		models.Construct(models.Posts{}),     // Public method. It dosn't need authorization. Init only Posts model.
-		binding.BindUrl(models.UrlOptions{}), // For further purposes (expand, etc...)
-		controllers.PostsFind,                //
+		models.Construct(models.Posts{}),  // Public method. It dosn't need authorization. Init only Posts model.
+		binding.Form(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc..
+		controllers.PostsFind,             //
 	)
 
 	// Find all
 	route.Get("/posts",
-		models.Construct(models.Posts{}),     // Public method. It dosn't need authorization. Init only Posts model.
-		binding.BindUrl(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc... Just a hack,
-		controllers.PostsFind,                // actually it invokes patched Form midleware directly (without content-type checking).
+		models.Construct(models.Posts{}),  // Public method. It dosn't need authorization. Init only Posts model.
+		binding.Form(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc..
+		controllers.PostsFind,
 	)
 
 	route.Post("/posts",
