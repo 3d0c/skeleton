@@ -62,16 +62,9 @@ func main() {
 		controllers.UsersCreate,           // func(u models.Users, params models.UserScheme, enc encoder.Encoder)
 	)
 
-	// Find Id
-	route.Get("/posts/:id",
+	route.Get("(/posts/:id)|(/posts)",
 		models.Construct(models.Posts{}),  // Public method. It dosn't need authorization. Init only Posts model.
-		binding.Form(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc..
-		controllers.PostsFind,             //
-	)
-
-	// Find all
-	route.Get("/posts",
-		models.Construct(models.Posts{}),  // Public method. It dosn't need authorization. Init only Posts model.
+		models.Construct(models.Users{}),  // Users model needed for expand of uid.
 		binding.Form(models.UrlOptions{}), // Bind url options, e.g.: ?limit=10&offset=100, etc..
 		controllers.PostsFind,
 	)

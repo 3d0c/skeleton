@@ -31,10 +31,10 @@ func (this UserScheme) Validate(errors *binding.Errors, req *http.Request) {
 }
 
 type PostScheme struct {
-	Id    bson.ObjectId `bson:"_id,omitempty" json:"id" binding:"-"`
-	Title string        `bson:",omitempty" json:"title"`
-	Body  string        `bson:",omitempty" json:"body"`
-	Uid   bson.ObjectId `bson:",omitempty" json:"uid" binding:"-"`
+	Id    bson.ObjectId `bson:"_id,omitempty" json:"id"      binding:"-"`
+	Title string        `bson:",omitempty"    json:"title"`
+	Body  string        `bson:",omitempty"    json:"body"`
+	Uid   interface{}   `bson:",omitempty"    json:"uid"     binding:"-"`
 }
 
 func (this PostScheme) Validate(errors *binding.Errors, req *http.Request) {
@@ -45,15 +45,16 @@ func (this PostScheme) Validate(errors *binding.Errors, req *http.Request) {
 
 // This isn't a real model scheme, but there is a good place to store it all together
 type UrlOptions struct {
-	Limit  int `url:"limit"`
-	Offset int `url:"offset"`
+	Limit  int    `url:"limit"`
+	Offset int    `url:"offset"`
+	Expand string `url:"expand"`
 }
 
 type CommentScheme struct {
-	Id     bson.ObjectId `bson:"_id,omitempty" json:"id" binding:"-"`
-	Uid    bson.ObjectId `bson:"uid,omitempty" json:"uid" binding:"-"`
+	Id     bson.ObjectId `bson:"_id,omitempty" json:"id"      binding:"-"`
+	Uid    bson.ObjectId `bson:"uid,omitempty" json:"uid"     binding:"-"`
 	PostId bson.ObjectId `bson:"pid,omitempty" json:"post_id" binding:"require"`
-	Body   string        `bson:",omitempty" json:"body"`
+	Body   string        `bson:",omitempty"    json:"body"`
 }
 
 func (this CommentScheme) Validate(errors *binding.Errors, req *http.Request) {

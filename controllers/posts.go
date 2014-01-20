@@ -5,6 +5,7 @@ import (
 	"github.com/3d0c/skeleton/models"
 	"github.com/codegangsta/martini"
 	"labix.org/v2/mgo/bson"
+	// "log"
 	"net/http"
 )
 
@@ -20,7 +21,7 @@ func PostsCreate(u models.Users, post models.Posts, params models.PostScheme, en
 	return http.StatusOK, encoder.Must(enc.Encode(result))
 }
 
-func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params, opt models.UrlOptions) (int, []byte) {
+func PostsFind(posts models.Posts, users models.Users, enc encoder.Encoder, urlParams martini.Params, opt models.UrlOptions) (int, []byte) {
 	var result interface{}
 
 	if id, ok := urlParams["id"]; ok && bson.IsObjectIdHex(id) {
@@ -31,6 +32,10 @@ func PostsFind(posts models.Posts, enc encoder.Encoder, urlParams martini.Params
 
 	if result == nil {
 		return http.StatusNotFound, []byte{}
+	}
+
+	if opt.Expand != "" {
+		users.Expand(result, opt.Expand)
 	}
 
 	return http.StatusOK, encoder.Must(enc.Encode(result))
