@@ -2,6 +2,7 @@
 Features:
 
 - DRY Models (right now, only MongoDB supported)
+- Models Relations and Expand
 - Controllers
 - Auth (ready to use user model)
 - Schemes
@@ -229,4 +230,60 @@ Expected response:
 
 
 #### Models relations.
-Coming soon…
+Each scheme field, defined as `interface{}` and containing valid reference (bson.ObjectId) to the other object could be "expanded".  
+For example see `PostsScheme`
+
+```go
+type PostScheme struct {
+        Id    bson.ObjectId `bson:"_id,omitempty" json:"id"      binding:"-"`
+        Title string        `bson:",omitempty"    json:"title"`
+        Body  string        `bson:",omitempty"    json:"body"`
+        Uid   interface{}   `bson:",omitempty"    json:"uid"     binding:"-"`
+}
+```
+
+Common request:
+
+```sh
+curl -XGET -s  http://localhost:8000/posts/52cea9a1fcb05d3338000001
+```
+
+returs:
+
+```json
+{
+    "body": "bbbody",
+    "id": "52cea9a1fcb05d3338000001",
+    "title": "xcvb",
+    "uid": "52ce6a5afcb05d213a000001"
+}
+```
+
+Expand it:
+
+```sh
+curl -XGET -s  http://localhost:8000/posts/52cea9a1fcb05d3338000001\?expand\=uid
+```
+
+```json
+{
+    "body": "bbbody",
+    "id": "52cea9a1fcb05d3338000001",
+    "title": "xcvb",
+    "uid": {
+        "id": "52ce6a5afcb05d213a000001",
+        "login": "xxxx9",
+        "profile": {
+            "first_name": "ok22",
+            "last_name": ""
+        }
+    }
+}
+```
+
+See the `model` package for details.  
+
+Aware of! This is a concept for demo usage, this stuff is pretty slow (especially on big slices).
+Here is no comparison with relational databases, where simple JOIN gets you thousands of relations in few milliseconds.
+
+But  anyway, this is better, than nothing.
