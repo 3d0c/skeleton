@@ -1,0 +1,8 @@
+{
+    "application" : {
+        "listen_on" : ":5500",
+        "https_on"  : ":5443",
+        "ssl_cert"  : "./cert.pem",
+        "ssl_key"   : "./key.pem"
+    }
+}
