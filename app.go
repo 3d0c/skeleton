@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/3d0c/martini-contrib/binding"
 	"github.com/3d0c/martini-contrib/config"
-	"github.com/3d0c/martini-contrib/encoder"
 	"github.com/3d0c/skeleton/controllers"
 	"github.com/3d0c/skeleton/models"
 	"github.com/3d0c/skeleton/utils"
 	"github.com/codegangsta/martini"
+	"github.com/martini-contrib/encoder"
 	"log"
 	"net/http"
 )

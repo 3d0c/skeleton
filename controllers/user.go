@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/3d0c/martini-contrib/encoder"
 	"github.com/3d0c/skeleton/models"
 	"github.com/3d0c/skeleton/utils"
+	"github.com/martini-contrib/encoder"
 	"net/http"
 )
 
