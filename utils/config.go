@@ -1,10 +1,12 @@
 package utils
 
-var AppConfig *ConfigScheme
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+)
 
-func init() {
-	AppConfig = &ConfigScheme{}
-}
+var AppConfig *ConfigScheme
 
 type ConfigScheme struct {
 	App struct {
@@ -13,6 +15,28 @@ type ConfigScheme struct {
 		SSLCert  string `json:"ssl_cert"`
 		SSLKey   string `json:"ssl_key"`
 	} `json:"application"`
+}
+
+func InitConfigFrom(file string) error {
+	if AppConfig != nil {
+		return nil
+	}
+
+	AppConfig = &ConfigScheme{}
+
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Println("Unable to read", file, "Error:", err)
+		return err
+	}
+
+	err = json.Unmarshal(data, AppConfig)
+	if err != nil {
+		log.Println("Unable to read config.", err)
+		return err
+	}
+
+	return nil
 }
 
 func (this *ConfigScheme) ListenOn() string {

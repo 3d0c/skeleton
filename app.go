@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/3d0c/martini-contrib/config"
 	ctrl "github.com/3d0c/skeleton/controllers"
 	"github.com/3d0c/skeleton/models"
 	. "github.com/3d0c/skeleton/utils"
 	"github.com/go-martini/martini"
-	"github.com/martini-contrib/encoder"
+	"github.com/martini-contrib/render"
 	"log"
 	"net/http"
 )
@@ -15,18 +14,14 @@ import (
 func init() {
 	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 
-	config.Init("./config.json")
-	config.LoadInto(AppConfig)
+	if err := InitConfigFrom("./config.json"); err != nil {
+		log.Fatalln("Unable to proceed")
+	}
 }
 
 func main() {
 	m := martini.New()
 	route := martini.NewRouter()
-
-	m.Use(func(c martini.Context, w http.ResponseWriter) {
-		c.MapTo(encoder.JsonEncoder{}, (*encoder.Encoder)(nil))
-		w.Header().Set("Content-Type", "application/json")
-	})
 
 	// Some CORS stuff
 	m.Use(func(w http.ResponseWriter, req *http.Request) {
@@ -43,18 +38,26 @@ func main() {
 		w.Header().Add("Cache-Control", "public")
 	})
 
+	m.Use(render.Renderer(render.Options{
+		IndentJSON: true,
+	}))
+
 	// Preflight OPTIONS
 	route.Options("/**")
 
-	// Example one
 	route.Get("/user",
 		construct(&models.User{}),
 		construct(&ctrl.User{}),
 		(*ctrl.User).Find,
 	)
 
-	// Example one
-	route.Get("/post",
+	route.Get("/posts",
+		construct(&models.User{}),
+		construct(&ctrl.Post{}),
+		(*ctrl.Post).FindAll,
+	)
+
+	route.Get("/posts/:id",
 		construct(&models.User{}),
 		construct(&ctrl.Post{}),
 		(*ctrl.Post).Find,

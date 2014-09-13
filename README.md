@@ -32,10 +32,11 @@ Check out `config.json` for base settings. Default one:
 ```
 
 Run it by simple `go run app.go` or using some code reloader `gin -p 5000 -a 5500`, so it will be available on `5500` or `5000` port.  
+
 Check it:
 
 ```sh
-~ curl -i http://localhost:5500/user
+~ curl -i http://localhost:5500/posts/1
 
 HTTP/1.1 200 OK
 Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token
@@ -48,5 +49,8 @@ Pragma: public
 Date: Mon, 18 Aug 2014 21:37:25 GMT
 Content-Length: 19
 
-{"name":"test one"}
+{
+  "id": "1",
+  "name": "yyy"
+}
 ```
